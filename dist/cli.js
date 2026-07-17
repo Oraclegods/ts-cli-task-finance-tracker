@@ -4,7 +4,6 @@
 export class CliRenderer {
     /**
      * Loops through and outputs high-priority or completed tasks matching evaluation metrics.
-     * @param tasks Typed array containing task structures.
      */
     static printTasks(tasks) {
         console.log("\n📋 Current Project Tasks Overview:");
@@ -18,8 +17,23 @@ export class CliRenderer {
         });
     }
     /**
+     * RECURSION REQUIREMENT: Recursively searches through an array of tasks
+     * to find a match by keyword.
+     */
+    static findTaskRecursively(tasks, keyword, index = 0) {
+        // Base Case 1: Out of bounds (not found)
+        if (index >= tasks.length) {
+            return null;
+        }
+        // Base Case 2: Match found
+        if (tasks[index].title.toLowerCase().includes(keyword.toLowerCase())) {
+            return tasks[index];
+        }
+        // Recursive Step: Move to the next element
+        return CliRenderer.findTaskRecursively(tasks, keyword, index + 1);
+    }
+    /**
      * Iterates over financial arrays to aggregate accounts using accumulation metrics.
-     * @param transactions Typed array containing transactional data blocks.
      */
     static printFinancials(transactions) {
         console.log("\n💰 Financial Cash Flow Analytics:");
@@ -27,14 +41,12 @@ export class CliRenderer {
             console.log("  No ledger statements found.");
             return;
         }
-        // Functional array calculation metrics
         const netBalance = transactions.reduce((total, current) => total + current.amount, 0);
         transactions.forEach((tx) => {
             const structuralMarker = tx.amount > 0 ? "[🟢 Income]" : "[🔴 Expense]";
             console.log(`  * ${structuralMarker} ${tx.description} (${tx.category}): $${tx.amount}`);
         });
         console.log(`\n💵 Calculated Real-Time Net Balance: $${netBalance}`);
-        // Strict conditional check boundaries
         if (netBalance < 0) {
             console.log("  ⚠️ Alert: Deficit warning. Resource expenditures exceed current channels.");
         }
