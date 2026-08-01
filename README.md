@@ -32,7 +32,7 @@ The relational database schema is defined in `schema.sql` and consists of 4 norm
 
 ## Video Demonstration
 
-[Watch Software Demonstration Video](YOUR_NEW_MODULE_2_VIDEO_LINK_HERE)[cite: 1]
+[Watch Software Demonstration Video](https://youtu.be/-L5gpFuy7Lk)[cite: 1]
 
 *(Module 1 Video Archive: [Watch Module 1 Video](https://youtu.be/hmcEdsrDtcc))*[cite: 1]
 
@@ -40,5 +40,5 @@ The relational database schema is defined in `schema.sql` and consists of 4 norm
 
 1. **Clone the repository:**
    ```bash
-   git clone <your-github-repo-url>
+   git clone <https://github.com/Oraclegods/ts-cli-task-finance-tracker>
    cd ts-cli-task-finance-tracker
