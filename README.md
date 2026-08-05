@@ -1,44 +1,47 @@
-# TS Task & Financial CLI Manager (SQL Relational Edition)
+# Overview
 
-## Overview
+**Software Title:** TS Task & Financial CLI Manager (SQL Relational Edition)
 
-This software is a robust command-line interface utility engineered in TypeScript to track project management milestones and monitor real-time financial cash flows[cite: 1, 4]. Originally built in Module 1, this project was refactored in Module 2 to upgrade the data persistence layer from local JSON files to a fully normalized **SQLite relational database** (`app_data.db`) using `better-sqlite3`[cite: 1, 2, 4].
+**Software Description:**  
+This application is a command-line interface utility engineered in TypeScript to manage tasks and track real-time financial cash flows. Built as an upgrade to Module 1, this project transitions data storage from local JSON files to a fully normalized **SQLite relational database** (`app_data.db`) using `better-sqlite3`[cite: 1, 2]. The system executes parameterized SQL CRUD operations, executes relational `INNER JOIN` queries across tables, and outputs aggregated financial reports using SQL `GROUP BY` and `SUM()` functions[cite: 2].
 
-The application utilizes strict static type boundaries, generic class systems, recursive search utilities, and a parameterized SQL interface to execute full CRUD operations, perform relational `INNER JOIN` queries, and output aggregate summary reports using `GROUP BY` and `SUM()` functions[cite: 1, 2, 4].
+# Development Environment
 
-## Development Environment
-
-* **Language:** TypeScript / Node.js (ES Modules)[cite: 1]
+* **Programming Language:** TypeScript / Node.js (ES Modules)[cite: 1]
 * **Database Engine:** SQLite 3[cite: 2]
 * **Driver / Library:** `better-sqlite3`[cite: 2]
-* **Execution Utility:** `tsx` (TypeScript Execution Engine)
-* **IDE:** Visual Studio Code
-* **Version Control:** Git & GitHub[cite: 1]
+* **Execution Environment:** `tsx` (TypeScript Execution Engine)
+* **Integrated Development Environment:** Visual Studio Code
+* **Version Control System:** Git & GitHub[cite: 1]
 
-## Relational Database Design
+# DB Design
 
-The relational database schema is defined in `schema.sql` and consists of 4 normalized tables:
+The relational database schema is configured in `schema.sql` and consists of 4 normalized tables:
 
-1. **`users`**: Stores user account profiles with primary keys and unique email constraints[cite: 2].
-2. **`categories`**: Categorizes financial line items into 'Income' or 'Expense' types[cite: 2].
-3. **`items`**: Tracks physical or educational resources linked to users via foreign keys[cite: 2].
-4. **`transactions`**: Records income and expense entries with foreign keys referencing `users(id)` and `categories(id)`[cite: 2].
+1. **`users`**: Stores user profiles with primary keys and unique email constraints[cite: 2].
+2. **`categories`**: Classifies transaction types as either 'Income' or 'Expense'[cite: 2].
+3. **`items`**: Tracks resource items connected to users and categories via Foreign Keys[cite: 2].
+4. **`transactions`**: Logs monetary entries with Foreign Key constraints referencing `users(id)` and `categories(id)`[cite: 2].
 
-### Key Database Features
-* **Referential Integrity:** Enforces foreign key constraints with `ON DELETE CASCADE` and `RESTRICT` actions[cite: 2].
-* **Parameterized Queries:** Protects all CRUD operations against SQL injection vulnerabilities using positional placeholders (`?`)[cite: 2, 4].
-* **Relational JOINs:** Merges transaction records with category metadata using `INNER JOIN` queries[cite: 2, 4].
-* **Aggregations:** Generates financial summary tables using `GROUP BY`, `SUM()`, and `COUNT()`[cite: 2, 4].
+### Relational Features
+* **Foreign Key Constraints:** Enforces referential integrity with `ON DELETE CASCADE` and `RESTRICT` rules[cite: 2].
+* **Parameterized Queries:** Protects all database operations against SQL injection attacks using positional parameters (`?`)[cite: 2].
+* **Relational Joins:** Pulls transaction records together with category names using `INNER JOIN` operations[cite: 2].
+* **SQL Aggregation:** Computes category totals and record counts using `GROUP BY`, `SUM()`, and `COUNT()`[cite: 2].
 
-## Video Demonstration
+# Useful Websites
 
-[Watch Software Demonstration Video](https://youtu.be/-L5gpFuy7Lk)[cite: 1]
+* [SQLite Official Documentation](https://www.sqlite.org/docs.html)
+* [better-sqlite3 API Reference](https://github.com/WiseLibs/better-sqlite3)
+* [TypeScript Official Documentation](https://www.typescriptlang.org/docs/)
+* [Node.js File System API Guide](https://nodejs.org/api/fs.html)
 
-*(Module 1 Video Archive: [Watch Module 1 Video](https://youtu.be/hmcEdsrDtcc))*[cite: 1]
+# Video Demonstration
 
-## Instructions to Run the Code
+[Watch the Software Demonstration Video](https://youtu.be/-L5gpFuy7Lk)[cite: 1]
 
-1. **Clone the repository:**
-   ```bash
-   git clone <https://github.com/Oraclegods/ts-cli-task-finance-tracker>
-   cd ts-cli-task-finance-tracker
+# Future Work
+
+* [ ] Add automated database migration scripts for schema version updates.
+* [ ] Build a Web GUI front-end using React or Express.js.
+* [ ] Integrate user authentication and encrypted session storage.

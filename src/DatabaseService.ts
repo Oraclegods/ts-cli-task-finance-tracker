@@ -2,6 +2,9 @@ import Database from 'better-sqlite3';
 import * as fs from 'fs';
 import * as path from 'path';
 
+/**
+ * Interface representing a system user record.
+ */
 export interface User {
     id?: number;
     name: string;
@@ -9,12 +12,18 @@ export interface User {
     created_at?: string;
 }
 
+/**
+ * Interface representing a transaction category.
+ */
 export interface Category {
     id?: number;
     name: string;
     type: 'Income' | 'Expense';
 }
 
+/**
+ * Interface representing a financial transaction entity.
+ */
 export interface Transaction {
     id?: number;
     user_id: number;
@@ -22,9 +31,12 @@ export interface Transaction {
     amount: number;
     description: string;
     transaction_date?: string;
-    category_name?: string; // Populated via JOIN
+    category_name?: string;
 }
 
+/**
+ * Interface representing category summary aggregate results.
+ */
 export interface SpendingSummary {
     category_name: string;
     type: string;
@@ -32,17 +44,26 @@ export interface SpendingSummary {
     transaction_count: number;
 }
 
+/**
+ * Service class for handling all relational database connectivity, 
+ * schema initialization, and parameterized CRUD operations.
+ */
 export class DatabaseService {
     private db: Database.Database;
 
+    /**
+     * Initializes the SQLite database connection and enables foreign key constraints.
+     * @param dbPath The file system path to the SQLite database file.
+     */
     constructor(dbPath: string = 'app_data.db') {
         this.db = new Database(dbPath);
-        // Enable Foreign Keys in SQLite
         this.db.pragma('foreign_keys = ON');
     }
 
     /**
-     * Initializes the database by executing schema.sql and seed.sql if tables do not exist
+     * Reads and executes schema.sql and seed.sql to construct tables and populate test records.
+     * Checks if data exists prior to running seed scripts to avoid duplicate key errors.
+     * @returns void
      */
     public initializeDatabase(): void {
         const schemaPath = path.join(process.cwd(), 'schema.sql');
@@ -53,7 +74,6 @@ export class DatabaseService {
             this.db.exec(schemaSql);
         }
 
-        // Check if data is seeded; if not, seed initial records
         const userCount = this.db.prepare('SELECT COUNT(*) as count FROM users').get() as { count: number };
         if (userCount.count === 0 && fs.existsSync(seedPath)) {
             const seedSql = fs.readFileSync(seedPath, 'utf8');
@@ -61,8 +81,14 @@ export class DatabaseService {
         }
     }
 
-    // --- CREATE Operations (Parameterized) ---
-
+    /**
+     * Inserts a new transaction record into the database using parameterized bindings.
+     * @param userId The foreign key ID of the user creating the transaction.
+     * @param categoryId The foreign key ID of the transaction category.
+     * @param amount The numeric monetary value of the transaction.
+     * @param description A text summary describing the transaction.
+     * @returns The newly created database primary key ID.
+     */
     public addTransaction(userId: number, categoryId: number, amount: number, description: string): number {
         const stmt = this.db.prepare(`
             INSERT INTO transactions (user_id, category_id, amount, description)
@@ -72,6 +98,12 @@ export class DatabaseService {
         return info.lastInsertRowid as number;
     }
 
+    /**
+     * Inserts a new user record into the system with parameterized inputs.
+     * @param name The full name of the user.
+     * @param email The unique email address of the user.
+     * @returns The generated primary key user ID.
+     */
     public addUser(name: string, email: string): number {
         const stmt = this.db.prepare(`
             INSERT INTO users (name, email)
@@ -81,8 +113,11 @@ export class DatabaseService {
         return info.lastInsertRowid as number;
     }
 
-    // --- READ / JOIN Operations ---
-
+    /**
+     * Retrieves all transactions for a specific user using an INNER JOIN to include category details.
+     * @param userId The ID of the user whose records are being fetched.
+     * @returns An array of Transaction objects containing joined category names.
+     */
     public getAllTransactionsWithDetails(userId: number): Transaction[] {
         const stmt = this.db.prepare(`
             SELECT 
@@ -101,13 +136,20 @@ export class DatabaseService {
         return stmt.all(userId) as Transaction[];
     }
 
+    /**
+     * Retrieves all category records ordered by category type and name.
+     * @returns An array of Category entities.
+     */
     public getCategories(): Category[] {
         const stmt = this.db.prepare('SELECT * FROM categories ORDER BY type, name');
         return stmt.all() as Category[];
     }
 
-    // --- AGGREGATION & GROUP BY Report ---
-
+    /**
+     * Executes a relational aggregation query grouping transactions by category and summing total amounts.
+     * @param userId The ID of the user to generate the summary report for.
+     * @returns An array of SpendingSummary objects containing aggregated totals and counts.
+     */
     public getCategorySummaryReport(userId: number): SpendingSummary[] {
         const stmt = this.db.prepare(`
             SELECT 
@@ -124,8 +166,12 @@ export class DatabaseService {
         return stmt.all(userId) as SpendingSummary[];
     }
 
-    // --- UPDATE Operation (Parameterized) ---
-
+    /**
+     * Updates an existing transaction amount using parameterized positional arguments.
+     * @param transactionId The primary key ID of the transaction to update.
+     * @param newAmount The new monetary value to set.
+     * @returns True if the update modified at least one row, false otherwise.
+     */
     public updateTransactionAmount(transactionId: number, newAmount: number): boolean {
         const stmt = this.db.prepare(`
             UPDATE transactions
@@ -136,8 +182,11 @@ export class DatabaseService {
         return result.changes > 0;
     }
 
-    // --- DELETE Operation (Parameterized) ---
-
+    /**
+     * Removes a transaction record from the database by ID using parameterized query execution.
+     * @param transactionId The primary key ID of the transaction to delete.
+     * @returns True if a record was deleted, false otherwise.
+     */
     public deleteTransaction(transactionId: number): boolean {
         const stmt = this.db.prepare(`
             DELETE FROM transactions
@@ -148,7 +197,8 @@ export class DatabaseService {
     }
 
     /**
-     * Closes the database connection cleanly
+     * Safely closes the database connection instance.
+     * @returns void
      */
     public close(): void {
         this.db.close();
